@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ShelfMapper">
+    
+    <resultMap type="Shelf" id="ShelfResult">
+        <result property="id"    column="id"    />
+        <result property="locationCode"    column="location_code"    />
+        <result property="locationName"    column="location_name"    />
+        <result property="posX"    column="pos_x"    />
+        <result property="posZ"    column="pos_z"    />
+        <result property="capacity"    column="capacity"    />
+        <result property="status"    column="status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectShelfVo">
+        select id, location_code, location_name, pos_x, pos_z, capacity, status, create_time, update_time from shelf
+    </sql>
+
+    <select id="selectShelfList" parameterType="Shelf" resultMap="ShelfResult">
+        <include refid="selectShelfVo"/>
+        <where>  
+            <if test="locationCode != null  and locationCode != ''"> and location_code = #{locationCode}</if>
+            <if test="locationName != null  and locationName != ''"> and location_name like concat('%', #{locationName}, '%')</if>
+            <if test="posX != null "> and pos_x = #{posX}</if>
+            <if test="posZ != null "> and pos_z = #{posZ}</if>
+            <if test="capacity != null "> and capacity = #{capacity}</if>
+            <if test="status != null "> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectShelfById" parameterType="Long" resultMap="ShelfResult">
+        <include refid="selectShelfVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertShelf" parameterType="Shelf" useGeneratedKeys="true" keyProperty="id">
+        insert into shelf
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="locationCode != null and locationCode != ''">location_code,</if>
+            <if test="locationName != null">location_name,</if>
+            <if test="posX != null">pos_x,</if>
+            <if test="posZ != null">pos_z,</if>
+            <if test="capacity != null">capacity,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="locationCode != null and locationCode != ''">#{locationCode},</if>
+            <if test="locationName != null">#{locationName},</if>
+            <if test="posX != null">#{posX},</if>
+            <if test="posZ != null">#{posZ},</if>
+            <if test="capacity != null">#{capacity},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateShelf" parameterType="Shelf">
+        update shelf
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="locationCode != null and locationCode != ''">location_code = #{locationCode},</if>
+            <if test="locationName != null">location_name = #{locationName},</if>
+            <if test="posX != null">pos_x = #{posX},</if>
+            <if test="posZ != null">pos_z = #{posZ},</if>
+            <if test="capacity != null">capacity = #{capacity},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteShelfById" parameterType="Long">
+        delete from shelf where id = #{id}
+    </delete>
+
+    <delete id="deleteShelfByIds" parameterType="String">
+        delete from shelf where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

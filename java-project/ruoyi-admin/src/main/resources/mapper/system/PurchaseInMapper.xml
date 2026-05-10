@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.system.mapper.PurchaseInMapper">
+
+    <resultMap id="PurchaseInResult" type="com.ruoyi.system.domain.PurchaseIn">
+        <id property="id" column="id"/>
+        <result property="productName" column="product_name"/>
+        <result property="quantity" column="quantity"/>
+        <result property="unit" column="unit"/>
+        <result property="productionDate" column="production_date"/>
+        <result property="shelfLife" column="shelf_life"/>
+        <result property="storageDate" column="storage_date"/>
+        <result property="remark" column="remark"/>
+        <result property="location" column="location"/>
+    </resultMap>
+
+    <select id="selectPurchaseInList" resultMap="PurchaseInResult">
+        SELECT * FROM purchase_in
+        <where>
+            <if test="productName != null and productName != ''">
+                AND product_name LIKE CONCAT('%', #{productName}, '%')
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="selectPurchaseInById" resultMap="PurchaseInResult">
+        SELECT * FROM purchase_in WHERE id = #{id}
+    </select>
+
+    <insert id="insertPurchaseIn" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO purchase_in(
+            product_name,
+            quantity,
+            unit,
+            production_date,
+            shelf_life,
+            storage_date,
+            remark,
+            location,
+            create_time
+        )
+        VALUES(
+                  #{productName},
+                  #{quantity},
+                  #{unit},
+                  #{productionDate},
+                  #{shelfLife},
+                  NOW(),
+                  #{remark},
+                  #{location},
+                  NOW()
+              )
+    </insert>
+
+    <update id="updatePurchaseIn">
+        UPDATE purchase_in
+        <set>
+            <if test="productName != null">product_name = #{productName},</if>
+            <if test="quantity != null">quantity = #{quantity},</if>
+            <if test="unit != null">unit = #{unit},</if>
+            <if test="productionDate != null">production_date = #{productionDate},</if>
+            <if test="shelfLife != null">shelf_life = #{shelfLife},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_time = NOW()
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deletePurchaseInById">
+        DELETE FROM purchase_in WHERE id = #{id}
+    </delete>
+
+    <delete id="deletePurchaseInByIds">
+        DELETE FROM purchase_in WHERE id IN
+        <foreach collection="array" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

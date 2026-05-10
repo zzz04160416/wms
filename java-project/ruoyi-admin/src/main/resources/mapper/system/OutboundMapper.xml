@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.system.mapper.OutboundMapper">
+
+    <resultMap id="OutboundResult" type="com.ruoyi.system.domain.Outbound">
+        <id property="id" column="id"/>
+        <result property="productName" column="product_name"/>
+        <result property="quantity" column="quantity"/>
+        <result property="unit" column="unit"/>
+        <result property="outDate" column="out_date"/>
+        <result property="remark" column="remark"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <select id="selectOutboundList" resultMap="OutboundResult">
+        SELECT * FROM outbound
+        <where>
+            <if test="productName != null and productName != ''">
+                AND product_name LIKE CONCAT('%', #{productName}, '%')
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="selectOutboundById" resultMap="OutboundResult">
+        SELECT * FROM outbound WHERE id = #{id}
+    </select>
+
+    <insert id="insertOutbound" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO outbound(
+            product_name,
+            quantity,
+            unit,
+            out_date,
+            remark,
+            create_time
+        )
+        VALUES(
+                  #{productName},
+                  #{quantity},
+                  #{unit},
+                  NOW(),
+                  #{remark},
+                  NOW()
+              )
+    </insert>
+
+    <update id="updateOutbound">
+        UPDATE outbound
+        <set>
+            <if test="productName != null">product_name = #{productName},</if>
+            <if test="quantity != null">quantity = #{quantity},</if>
+            <if test="unit != null">unit = #{unit},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteOutboundById">
+        DELETE FROM outbound WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteOutboundByIds">
+        DELETE FROM outbound WHERE id IN
+        <foreach collection="array" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>
